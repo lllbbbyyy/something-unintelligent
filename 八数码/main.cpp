@@ -4,6 +4,7 @@
 #include<conio.h>
 #include<queue>
 #include<map>
+#include<stack>
 #include"definition.h"
 //负责输入状态
 void input(array& grid)
@@ -154,7 +155,7 @@ void print(nodeState& tem)
 }
 void print(foundState& tem)
 {
-	std::cout << "-------"<< std::endl;
+	std::cout << "-------" << std::endl;
 	for (int i = 1; i < int(tem.arr.size()); i++)
 	{
 		for (int j = 1; j < int(tem.arr[0].size()); j++)
@@ -164,6 +165,18 @@ void print(foundState& tem)
 		std::cout << std::endl;
 	}
 	system("pause");
+}
+//返回存储的路径,防止构造函数花费太多时间因此使用引用传递
+void findRoute(array& beginState, array& endState, map& foundMap, std::deque<foundState>& route)
+{
+	foundState tem(endState);
+	route.push_front(tem);
+	while (foundMap[tem] != beginState)
+	{
+		tem = foundMap[tem];
+		route.push_front(tem);
+	}
+	route.push_front(foundState(beginState));
 }
 int main()
 {
@@ -190,22 +203,17 @@ int main()
 		gridCurr = qu.top();
 		qu.pop();
 		numFoundNode++;
-
 		//	print(gridCurr);
-
-			//	draw();
 	}
 	//输出深度信息，已扩展节点，未扩展节点
 	std::cout << gridCurr.value << std::endl << numFoundNode << std::endl << qu.size() << std::endl;
-	foundState mm(gridEnd);
-	print(mm);
-	while (foundMap[mm] != gridBegin)
+	std::deque<foundState> route;
+	findRoute(gridBegin, gridEnd, foundMap, route);
+	for (auto it : route)
 	{
-		mm = foundMap[mm];
-		print(mm);
+		print(it);
+		//draw()动画演示
 	}
-	foundState nn(gridBegin);
-	print(nn);
 	//	end();
 	return 0;
 }
