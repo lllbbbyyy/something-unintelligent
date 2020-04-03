@@ -22,4 +22,4 @@ void end();
 //绘制一次状态画面
 void paintingDraw(foundState& paint);
 //画一个数字，这个可以后面用图片等代替
-void digitDraw(int x, int y, int num);
+void digitDraw(int num, int reLeft, int reTop, int reRight, int reBottom);
