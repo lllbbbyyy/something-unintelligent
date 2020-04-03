@@ -1,4 +1,7 @@
 #pragma once
+#include<array>
+#include<map>
+#include<queue>
 //n数码问题的行列
 const int row = 3;
 const int col = 3;
@@ -8,7 +11,7 @@ struct array
 	std::array<std::array<int, col + 1>, row + 1> arr;
 	int step;
 };
-//主要用于配合set存放已经寻找过的局面信息，主要是为了重载小于号，便于判断两个局面是否相同
+//主要用于配合map存放已经寻找过的局面信息，主要是为了重载小于号，便于判断两个局面是否相同
 struct foundState
 {
 	std::array<std::array<int, col + 1>, row + 1> arr;
@@ -89,3 +92,14 @@ struct nodeState
 };
 typedef std::priority_queue<nodeState> priQueue;
 typedef std::map<foundState, foundState> map;
+
+//inner函数
+
+//判断两个状态是否相等
+bool isEqual(array& grid1, array& grid2);
+//评估函数，目前mode=1为不相同个数的评估，mode=2为曼哈顿距离意义下的评估
+int calculateValue(array& curState, array& endState, int mode = 2);
+//寻找下一个状态
+void nextState(array& curState, array& endState, priQueue& qu, map& foundMap);
+//返回存储的路径,防止构造函数花费太多时间因此使用引用传递
+void findRoute(array& beginState, array& endState, map& foundMap, std::deque<foundState>& route);
