@@ -2,7 +2,7 @@
 #include<iostream>
 #include<graphics.h>
 //图形界面的初始化
-void init()
+void init(const double searchTime, const int totalStep, const int visNum, const int unvisNum)
 {
 	initgraph(widthWindow, heightWindow);
 	//灰色背景色
@@ -11,6 +11,24 @@ void init()
 	//画大方块
 	setfillcolor(RED);
 	fillrectangle(xFrame, yFrame, xFrame + lengthFrame, yFrame + lengthFrame);
+	//TODO:画文字框
+	//设置字体样式
+	settextcolor(BLACK);
+	settextstyle(fontSize, 0, _T("宋体"));
+	//显示全局信息
+	int xText = xTextBegin, yText = yTextTop;
+	TCHAR s[1024];
+	_stprintf_s(s, _T("%Ts%.2f%Ts"), SEARCH_TIME, searchTime, MILLISECOND);
+	outtextxy(xText, yText, s);
+	yText += fontSize;
+	_stprintf_s(s, _T("%Ts%d"), SOLUTION_STEP, totalStep);
+	outtextxy(xText, yText, s);
+	yText += fontSize;
+	_stprintf_s(s, _T("%Ts%d"), VISITED_NUMBER, visNum);
+	outtextxy(xText, yText, s);
+	yText += fontSize;
+	_stprintf_s(s, _T("%Ts%d"), UNVISITED_NUMBER, unvisNum);
+	outtextxy(xText, yText, s);
 }
 //图形界面释放
 void end()
@@ -48,4 +66,15 @@ void paintingDraw(foundState& paint)
 			digitDraw(paint.arr[i][j], reLeft, reTop, reRight, reBottom);
 		}
 	}
+}
+
+
+//更新当前数据，目前只有当前步长
+void updateStatus(const int step)
+{
+	TCHAR s[1024];
+	settextstyle(fontSize, 0, _T("宋体"));
+	clearrectangle(xTextBegin, yTextMid, xTextBegin + 120, yTextMid + fontSize);
+	_stprintf_s(s, _T("%Ts%d"), CURRENT_STEP, step);
+	outtextxy(xTextBegin, yTextMid, s);
 }

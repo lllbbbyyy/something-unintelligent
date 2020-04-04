@@ -1,6 +1,7 @@
 #include<graphics.h>
 #include<iostream>
 #include<conio.h>
+#include<time.h>
 #include"innerDefinition.h"
 #include"UIDefinition.h"
 //负责输入状态
@@ -60,6 +61,11 @@ int main()
 	nodeState gridCurr = { calculateValue(gridBegin,gridEnd),gridBegin };
 	//记录已经遍历的节点数量
 	int numFoundNode = 0;
+	//用于计时
+	clock_t clockStart, clockEnd;
+	double milSec;
+	//开始计时
+	clockStart = clock();
 	//与最终局面不相同时
 	while (!isEqual(gridCurr.state, gridEnd))
 	{
@@ -70,16 +76,20 @@ int main()
 		numFoundNode++;
 		//	print(gridCurr);
 	}
+	//结束计时
+	clockEnd = clock();
+	milSec = (double)(clockEnd - clockStart) * 1000 / CLOCKS_PER_SEC;
 	//输出深度信息，已扩展节点，未扩展节点
 	std::cout << gridCurr.value << std::endl << numFoundNode << std::endl << qu.size() << std::endl;
 	std::deque<foundState> route;
 	findRoute(gridBegin, gridEnd, foundMap, route);
 	//开始画图
-	init();
-
+	init(milSec, gridCurr.value, numFoundNode, (int)qu.size());
+	int stepCnt = 0;
 	for (auto it : route)
 	{
 		paintingDraw(it);
+		updateStatus(stepCnt++);
 		//draw()动画演示
 		system("pause");
 	}
