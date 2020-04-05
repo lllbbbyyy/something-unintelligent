@@ -61,6 +61,8 @@ int main()
 	nodeState gridCurr = { calculateValue(gridBegin,gridEnd),gridBegin };
 	//记录已经遍历的节点数量
 	int numFoundNode = 0;
+	//演示模式，0为自动，1为手动
+	int dispMode = 0;
 	//用于计时
 	clock_t clockStart, clockEnd;
 	double milSec;
@@ -84,15 +86,17 @@ int main()
 	std::deque<foundState> route;
 	findRoute(gridBegin, gridEnd, foundMap, route);
 	//开始画图
-	init(milSec, gridCurr.value, numFoundNode, (int)qu.size());
 	int stepCnt = 0;
+	init(milSec, gridCurr.value, numFoundNode, (int)qu.size());
+	drawFinalStatus(foundState(gridEnd));
 	for (auto it : route)
 	{
 		paintingDraw(it);
 		updateStatus(stepCnt++);
-		//draw()动画演示
-		system("pause");
+		if(dispMode == 0) Sleep(1000);
+		else if (dispMode == 1) _getch();
 	}
+	system("pause");
 	end();
 	return 0;
 }
