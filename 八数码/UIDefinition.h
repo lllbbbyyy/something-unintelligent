@@ -61,6 +61,7 @@ void end();
 void drawFinalStatus(const foundState& paint);
 //绘制一次状态画面
 void paintingDraw(foundState& paint);
+void paintingDraw(array& paint);
 //画一个数字，这个可以后面用图片等代替
 void digitDraw(int num, int reLeft, int reTop, int reRight, int reBottom);
 //更新当前数据，目前只有当前步长
@@ -68,3 +69,8 @@ void updateStatus(const int step);
 
 //int select_function();
 int select_initial(int button_count, const wchar_t** text);
+//手玩模式的图形界面显示
+void init_play(array gridBegin,array gridEnd);
+void click_to_next(array& current);
+bool match(array& paint, int x, int y, int& col, int& line);
+bool move(array& current, int col, int line);
