@@ -2,7 +2,7 @@
 #include<iostream>
 #include<graphics.h>
 //图形界面的初始化
-void init(const double searchTime, const int totalStep, const int visNum, const int unvisNum)
+void init(const int dispMode, const int selFun, const double searchTime, const int totalStep, const int visNum, const int unvisNum)
 {
 	initgraph(widthWindow, heightWindow);
 	//灰色背景色
@@ -26,6 +26,12 @@ void init(const double searchTime, const int totalStep, const int visNum, const 
 	//显示全局信息
 	setbkcolor(WHITE);
 	int xText = xTextBegin, yText = yTextTop;
+	_stprintf_s(s, _T("%Ts"), dispMode ? MANUAL_PLAY : AUTO_PLAY);
+	outtextxy(xText, yText, s);
+	yText += fontSize;
+	_stprintf_s(s, _T("%Ts%Ts"), SELECTED_FUNCTION, selFun ? FUNCTION2 : FUNCTION1);
+	outtextxy(xText, yText, s);
+	yText += fontSize;
 	_stprintf_s(s, _T("%Ts%.2f%Ts"), SEARCH_TIME, searchTime, MILLISECOND);
 	outtextxy(xText, yText, s);
 	yText += fontSize;

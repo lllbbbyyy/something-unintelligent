@@ -40,6 +40,7 @@ const wchar_t UNVISITED_NUMBER[] = L"未扩展节点：";
 const wchar_t CURRENT_STEP[] = L"当前步长：";
 const wchar_t CURRENT_STATUS[] = L"当前局面";
 const wchar_t FINAL_STATUS[] = L"目标局面";
+const wchar_t SELECTED_FUNCTION[] = L"估价函数：";
 
 const wchar_t FUNCTION1[] = L"function1";
 const wchar_t FUNCTION2[] = L"function2";
@@ -50,11 +51,13 @@ const wchar_t DISPLAY[] = L"演示模式";
 const wchar_t RANDOM[] = L"随机开局";
 const wchar_t PERSONAL[] = L"手动开局";
 
+const wchar_t AUTO_PLAY[] = L"自动演示";
+const wchar_t MANUAL_PLAY[] = L"手动演示";
 
 //函数声明
 
 //图形界面的初始化
-void init(const double searchTime, const int totalStep, const int visNum, const int unvisNum);
+void init(const int dispMode, const int selFun, const double searchTime, const int totalStep, const int visNum, const int unvisNum);
 //图形界面释放
 void end();
 //绘制目标状态

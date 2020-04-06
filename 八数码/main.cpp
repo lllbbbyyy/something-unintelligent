@@ -77,8 +77,10 @@ int main()
 
 	//演示模式
 	if (pattern == 1) {
-		//input(gridBegin);
-		//input(gridEnd);
+		//选择自动演示或手动演示
+		const wchar_t* dispModeText[] = { AUTO_PLAY, MANUAL_PLAY };
+		//0.自动演示 1.手动演示
+		int dispMode = select_initial(2, dispModeText);
 		//优先队列，以评估代价为关键词的小根堆，同时存储了局面
 		priQueue qu;
 		//存放已经遍历过的节点，相当于剪枝，注意不同于std::map
@@ -87,8 +89,6 @@ int main()
 		nodeState gridCurr = { calculateValue(gridBegin,gridEnd,function+1),gridBegin };
 		//记录已经遍历的节点数量
 		int numFoundNode = 0;
-		//演示模式，0为自动，1为手动
-		int dispMode = 0;
 		//用于计时
 		clock_t clockStart, clockEnd;
 		double milSec;
@@ -113,7 +113,7 @@ int main()
 		findRoute(gridBegin, gridEnd, foundMap, route);
 		//开始画图
 		int stepCnt = 0;
-		init(milSec, gridCurr.value, numFoundNode, (int)qu.size());
+		init(dispMode, function, milSec, gridCurr.value, numFoundNode, (int)qu.size());
 		drawFinalStatus(foundState(gridEnd));
 		for (auto it : route)
 		{
