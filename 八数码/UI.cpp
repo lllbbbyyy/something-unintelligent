@@ -103,3 +103,101 @@ void updateStatus(const int step)
 	_stprintf_s(s, _T("%Ts%d"), CURRENT_STEP, step);
 	outtextxy(xTextBegin, yTextMid, s);
 }
+
+/*
+int select_function() {
+	//画大框
+	initgraph(widthWindow, heightWindow);
+	//灰色背景色
+	setbkcolor(LIGHTGRAY);
+	//光标恢复到(0,0),颜色为背景色
+	cleardevice();
+	//设置字体
+	setbkcolor(BLACK);
+	settextcolor(WHITE);
+	settextstyle(fontSize, 0, _T("宋体"));
+	//画三个选择框
+	int button_x[3];
+	int button_y[3];
+	const int button_width = widthWindow / 7;
+	const int button_height = heightWindow / 8;
+	setfillcolor(BLACK);
+	for (int i = 0; i < 3; i++) {
+		button_x[i] = widthWindow * (2 * i + 1) / 7;
+		button_y[i] = heightWindow / 2;
+		fillrectangle(button_x[i], button_y[i], button_x[i] + button_width, button_y[i] + button_height);
+	}
+
+	//+1避免文本框遮挡边框线
+	TCHAR s[1024];
+	_stprintf_s(s, _T("%Ts"), FUNCTION1);
+	outtextxy(button_x[0]+1, button_y[0]+1, s);
+	_stprintf_s(s, _T("%Ts"), FUNCTION2);
+	outtextxy(button_x[1]+1, button_y[1]+1, s);
+	_stprintf_s(s, _T("%Ts"), FUNCTION3);
+	outtextxy(button_x[2]+1, button_y[2]+1, s);
+	//判断鼠标点击事件
+	MOUSEMSG m;
+	FlushMouseMsgBuffer();
+	while (1)
+	{
+		m = GetMouseMsg();
+		if(m.uMsg==WM_LBUTTONDOWN)
+		{
+			for (int i = 0; i < 3; i++) {
+				//to do:可加选择效果
+				if (m.x > button_x[i] && m.x<button_x[i] + button_width && m.y>button_y[i] && m.y < button_y[i] + button_height)
+					return i;
+			}
+		}
+	}
+}
+*/
+
+int select_initial(int button_count,const wchar_t** text) {
+	//画大框
+	initgraph(widthWindow, heightWindow);
+	//灰色背景色
+	setbkcolor(LIGHTGRAY);
+	//光标恢复到(0,0),颜色为背景色
+	cleardevice();
+	//设置字体
+	setbkcolor(BLACK);
+	settextcolor(WHITE);
+	settextstyle(fontSize, 0, _T("宋体"));
+	//画两个选择框
+	int num = button_count;
+	int* button_x = new int[num];
+	int* button_y = new int[num];
+	const int button_width = widthWindow / (2*num+1);
+	const int button_height = heightWindow / 8;
+	setfillcolor(BLACK);
+	for (int i = 0; i < num; i++) {
+		button_x[i] = widthWindow * (2 * i + 1) / (2*num+1);
+		button_y[i] = heightWindow / 2;
+		fillrectangle(button_x[i], button_y[i], button_x[i] + button_width, button_y[i] + button_height);
+	}
+
+	//+1避免文本框遮挡边框线
+	TCHAR s[1024];
+	for (int i = 0; i < num; i++)
+	{
+		_stprintf_s(s, _T("%Ts"), text[i]);
+		outtextxy(button_x[i] + 1, button_y[i] + 1, s);
+	}
+	//判断鼠标点击事件
+	MOUSEMSG m;
+	FlushMouseMsgBuffer();
+	while (1)
+	{
+		m = GetMouseMsg();
+		if (m.uMsg == WM_LBUTTONDOWN)
+		{
+			for (int i = 0; i < num; i++) {
+				//to do:可加选择效果
+				if (m.x > button_x[i] && m.x<button_x[i] + button_width && m.y>button_y[i] && m.y < button_y[i] + button_height)
+					return i;
+			}
+		}
+	}
+}

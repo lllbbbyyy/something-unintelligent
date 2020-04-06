@@ -41,6 +41,16 @@ const wchar_t CURRENT_STEP[] = L"当前步长：";
 const wchar_t CURRENT_STATUS[] = L"当前局面";
 const wchar_t FINAL_STATUS[] = L"目标局面";
 
+const wchar_t FUNCTION1[] = L"function1";
+const wchar_t FUNCTION2[] = L"function2";
+
+const wchar_t PLAY[] = L"手玩模式";
+const wchar_t DISPLAY[] = L"演示模式";
+
+const wchar_t RANDOM[] = L"随机开局";
+const wchar_t PERSONAL[] = L"手动开局";
+
+
 //函数声明
 
 //图形界面的初始化
@@ -55,3 +65,6 @@ void paintingDraw(foundState& paint);
 void digitDraw(int num, int reLeft, int reTop, int reRight, int reBottom);
 //更新当前数据，目前只有当前步长
 void updateStatus(const int step);
+
+//int select_function();
+int select_initial(int button_count, const wchar_t** text);

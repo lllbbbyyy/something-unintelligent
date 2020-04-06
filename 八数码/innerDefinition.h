@@ -2,6 +2,11 @@
 #include<array>
 #include<map>
 #include<queue>
+#include<time.h>
+#include<stdlib.h>
+#include<string>
+#include<fstream>
+#include<iostream>
 //n数码问题的行列
 const int row = 3;
 const int col = 3;
@@ -93,6 +98,17 @@ struct nodeState
 typedef std::priority_queue<nodeState> priQueue;
 typedef std::map<foundState, foundState> map;
 
+//initial flags,数字代表从左至右第几个按钮[0,1]
+const int RANDOM_INITIAL = 0;
+const int PERSONAL_INITIAL = 1;
+
+//personal initial读取文件位置
+const std::string PATH = ".\\input.txt";
+//personal initial flags
+const int NO_INPUT_FOUND = -1;
+const int NO_SOLUTION = -2;
+
+
 //inner函数
 
 //判断两个状态是否相等
@@ -103,3 +119,8 @@ int calculateValue(array& curState, array& endState, int mode = 2);
 void nextState(array& curState, array& endState, priQueue& qu, map& foundMap);
 //返回存储的路径,防止构造函数花费太多时间因此使用引用传递
 void findRoute(array& beginState, array& endState, map& foundMap, std::deque<foundState>& route);
+//判断对应开局和终局是否有解
+bool has_solution(array gridBegin, array gridEnd);
+//随机初始化开局和终局
+void random_initial(array& gridBegin,array& gridEnd);
+int personal_initial(array& gridBegin,array& gridEnd,const std::string path);
