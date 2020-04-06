@@ -54,10 +54,11 @@ int main()
 	//选择手玩模式或者演示模式
 	const wchar_t* patterns[] = { PLAY,DISPLAY };
 	int pattern = select_initial(2,patterns);
+	int function = 0;
 	if (pattern == 1) {
 		//选择启发式函数
 		const wchar_t* functions[] = { FUNCTION1,FUNCTION2 };
-		int function = select_initial(2,functions);
+		function = select_initial(2,functions);
 	}
 
 	//选择随机开局或手动开局
@@ -77,13 +78,13 @@ int main()
 	//演示模式
 	if (pattern == 1) {
 		//input(gridBegin);
-	//input(gridEnd);
-	//优先队列，以评估代价为关键词的小根堆，同时存储了局面
+		//input(gridEnd);
+		//优先队列，以评估代价为关键词的小根堆，同时存储了局面
 		priQueue qu;
 		//存放已经遍历过的节点，相当于剪枝，注意不同于std::map
 		map foundMap;
 		//节点存放当前信息
-		nodeState gridCurr = { calculateValue(gridBegin,gridEnd),gridBegin };
+		nodeState gridCurr = { calculateValue(gridBegin,gridEnd,function+1),gridBegin };
 		//记录已经遍历的节点数量
 		int numFoundNode = 0;
 		//演示模式，0为自动，1为手动
@@ -127,11 +128,14 @@ int main()
 	}
 	//手玩模式
 	else if(pattern == 0) {
+		init_play(gridBegin,gridEnd);
+		array gridCurrent = gridBegin;
+		while (!isEqual(gridCurrent, gridEnd)) {
+			click_to_next(gridCurrent);
+			paintingDraw(gridCurrent);
+		}
 		return 0;
-	}
-
-
-	
+	}	
 }
 /*
 8 6 7
