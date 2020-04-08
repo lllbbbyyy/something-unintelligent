@@ -2,6 +2,7 @@
 #include<iostream>
 #include<conio.h>
 #include<time.h>
+#include<thread>
 #include"innerDefinition.h"
 #include"UIDefinition.h"
 //负责输入状态
@@ -43,6 +44,29 @@ void print(foundState& tem)
 		std::cout << std::endl;
 	}
 	system("pause");
+}
+
+//判断鼠标位置是否在矩形内
+bool inRect(int x, int y, int left, int top, int width, int height)
+{
+	return (x >= left && x <= left + width && y >= top && y <= top + height);
+}
+
+//子线程内捕获鼠标事件
+void getMouseStatus(bool &done, bool &isPause)
+{
+	MOUSEMSG m;
+	while(!done)
+	{
+		m = GetMouseMsg();
+		if(m.uMsg == WM_LBUTTONDOWN)
+		{
+			if(inRect(m.x, m.y, xButtonContinue, yButton, widthButton, heightButton))
+				isPause = false;
+			if(inRect(m.x, m.y, xButtonPause, yButton, widthButton, heightButton))
+				isPause = true;
+		}
+	}
 }
 
 int main()
@@ -113,7 +137,10 @@ int main()
 		findRoute(gridBegin, gridEnd, foundMap, route);
 		//开始画图
 		int stepCnt = 0;
+		bool mDone = false;
+		bool isPause = false;
 		init(dispMode, function, milSec, gridCurr.value, numFoundNode, (int)qu.size());
+		std::thread thr(getMouseStatus, std::ref(mDone), std::ref(isPause));
 		drawFinalStatus(foundState(gridEnd));
 		for (auto it : route)
 		{
@@ -121,7 +148,10 @@ int main()
 			updateStatus(stepCnt++);
 			if (dispMode == 0) Sleep(1000);
 			else if (dispMode == 1) _getch();
+			while(dispMode == 0 && isPause);
 		}
+		mDone = true;
+		thr.join();
 		system("pause");
 		end();
 		return 0;

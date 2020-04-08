@@ -9,13 +9,13 @@ void init(const int dispMode, const int selFun, const double searchTime, const i
 	setbkcolor(LIGHTGRAY);
 	cleardevice();
 	//设置字体
-	settextcolor(BLACK);
 	settextstyle(fontSize, 0, _T("宋体"));
 	TCHAR s[1024];
 	//画左右框架
 	setfillcolor(RED);
 	fillrectangle(xFrameLeft, yFrameLeft, xFrameLeft + lengthFrame, yFrameLeft + lengthFrame);
 	fillrectangle(xFrameRight, yFrameRight, xFrameRight + lengthFrame, yFrameRight + lengthFrame);
+	settextcolor(BLACK);
 	_stprintf_s(s, _T("%Ts"),CURRENT_STATUS);
 	outtextxy(xFrameLeft, yFrameLeft - fontSize, s);
 	_stprintf_s(s, _T("%Ts"), FINAL_STATUS);
@@ -43,6 +43,18 @@ void init(const int dispMode, const int selFun, const double searchTime, const i
 	yText += fontSize;
 	_stprintf_s(s, _T("%Ts%d"), UNVISITED_NUMBER, unvisNum);
 	outtextxy(xText, yText, s);
+	//画控制按钮
+	setfillcolor(GREEN);
+	fillrectangle(xButtonContinue, yButton, xButtonContinue + widthButton, yButton + heightButton);
+	setfillcolor(RED);
+	fillrectangle(xButtonPause, yButton, xButtonPause + widthButton, yButton + heightButton);
+	settextcolor(WHITE);
+	setbkcolor(GREEN);
+	_stprintf_s(s, _T("%Ts"), CONTINUE);
+	outtextxy(xButtonContinue + 2, yButton + 2, s);
+	setbkcolor(RED);
+	_stprintf_s(s, _T("%Ts"), PAUSE);
+	outtextxy(xButtonPause + 2, yButton + 2, s);
 }
 //图形界面释放
 void end()
@@ -59,6 +71,7 @@ void digitDraw(int num,int reLeft,int reTop,int reRight,int reBottom)
 	WCHAR numC[10];
 	swprintf(numC, 100, L"%S", numc);
 	setbkmode(TRANSPARENT);
+	settextcolor(WHITE);
 	settextstyle(lengthBlock, 0, _T("宋体"));
 	drawtext(numC, &r, DT_CENTER | DT_VCENTER | DT_SINGLELINE | DT_EDITCONTROL);
 }
@@ -121,6 +134,8 @@ void paintingDraw(array& paint) {
 void updateStatus(const int step)
 {
 	TCHAR s[1024];
+	settextcolor(BLACK);
+	setbkcolor(WHITE);
 	settextstyle(fontSize, 0, _T("宋体"));
 	clearrectangle(xTextBegin, yTextMid, xTextBegin + 120, yTextMid + fontSize);
 	_stprintf_s(s, _T("%Ts%d"), CURRENT_STEP, step);

@@ -31,6 +31,13 @@ const int fontSize			= 20;
 const int xTextBegin		= xFrameStatus + 20;
 const int yTextTop			= yFrameLeft;
 const int yTextMid			= heightWindow / 2;
+//按钮宽高
+const int widthButton		= 120;
+const int heightButton		= 60;
+//控制按钮左上位置
+const int xButtonContinue	= xFrameStatus + 20;
+const int xButtonPause		= xFrameStatus + widthButton + 40;
+const int yButton			= yFrameStatus + heightFrameStatus - heightButton - 20;
 //文字字符串常量
 const wchar_t SEARCH_TIME[] = L"搜索时间：";
 const wchar_t MILLISECOND[] = L"毫秒";
@@ -53,6 +60,9 @@ const wchar_t PERSONAL[] = L"手动开局";
 
 const wchar_t AUTO_PLAY[] = L"自动演示";
 const wchar_t MANUAL_PLAY[] = L"手动演示";
+
+const wchar_t CONTINUE[] = L"继续";
+const wchar_t PAUSE[] = L"暂停";
 
 //函数声明
 
