@@ -15,10 +15,11 @@ bool isEqual(array& grid1, array& grid2)
 	}
 	return true;
 }
-//评估函数，目前mode=1为不相同个数的评估，mode=2为曼哈顿距离意义下的评估
-int calculateValue(array& curState, array& endState, int mode)
+//评估函数，目前mode=1为不相同个数的评估，mode=2为曼哈顿距离意义下的评估，mode=3为欧几里得距离评估
+//取消默认参数，防止不正常的调用
+double calculateValue(array& curState, array& endState, int mode)
 {
-	int value = 0;
+	double value = 0;
 	for (int i = 1; i < int(endState.arr.size()); i++)
 	{
 		for (int j = 1; j < int(endState.arr[0].size()); j++)
@@ -31,7 +32,7 @@ int calculateValue(array& curState, array& endState, int mode)
 				}
 			}
 			//曼哈顿距离评估
-			else if (mode == 2) {
+			else if (mode == 2 || mode == 3) {
 				int flag = 0;
 				for (int m = 1; m < int(endState.arr.size()); m++)
 				{
@@ -39,16 +40,22 @@ int calculateValue(array& curState, array& endState, int mode)
 					{
 						if (curState.arr[i][j] == endState.arr[m][n])
 						{
-							if (i < m)
-								value += m - i;
-							else
-								value += i - m;
-							if (j < n)
-								value += n - j;
-							else
-								value += j - n;
-							flag = 1;
-							break;
+							if (mode == 2) {
+								if (i < m)
+									value += m - i;
+								else
+									value += i - m;
+								if (j < n)
+									value += n - j;
+								else
+									value += j - n;
+								flag = 1;
+								break;
+							}
+							else if (mode == 3)
+							{
+								value += sqrt((i - m) * (i - m) + (j - n) * (j - n));
+							}
 						}
 					}
 					if (flag)
@@ -63,7 +70,8 @@ int calculateValue(array& curState, array& endState, int mode)
 	//g+h
 	return curState.step + value;
 }
-void nextState(array& curState, array& endState, priQueue& qu, map& foundMap)
+//增加参数mode，保证调用评估函数的时候不会一直使用默认的参数
+void nextState(array& curState, array& endState, priQueue& qu, map& foundMap,int mode)
 {
 	//四个移动方向
 	const int rowMove[] = { -1,0,1,0 };
@@ -100,7 +108,7 @@ void nextState(array& curState, array& endState, priQueue& qu, map& foundMap)
 			curState.step++;
 			if (foundMap.empty() || !foundMap.count(foundState(curState))) {
 				//如果已经遍历过的表为空或者当前的状态没有被寻找过，入队
-				qu.push({ calculateValue(curState,endState),curState });
+				qu.push({ calculateValue(curState,endState,mode),curState });
 				foundMap[foundState(curState)] = parent;
 			}
 			//回溯
@@ -124,7 +132,7 @@ void findRoute(array& beginState, array& endState, map& foundMap, std::deque<fou
 }
 
 bool has_solution(array gridBegin, array gridEnd) {
-	int num = (gridBegin.arr.size()-1)*(gridBegin.arr[0].size()-1);
+	int num = (gridBegin.arr.size() - 1) * (gridBegin.arr[0].size() - 1);
 	int* B = new int[num];
 	int* E = new int[num];
 	int ansBegin = 0;
@@ -133,9 +141,9 @@ bool has_solution(array gridBegin, array gridEnd) {
 		B[i] = 0;
 		E[i] = 0;
 		for (int j = 0; j < i; j++) {
-			if (gridBegin.arr[j/3+1][j % 3+1] && gridBegin.arr[i/3+1][i % 3+1]  && gridBegin.arr[j/3+1][j % 3+1] < gridBegin.arr[i/3+1][i % 3+1])
+			if (gridBegin.arr[j / 3 + 1][j % 3 + 1] && gridBegin.arr[i / 3 + 1][i % 3 + 1] && gridBegin.arr[j / 3 + 1][j % 3 + 1] < gridBegin.arr[i / 3 + 1][i % 3 + 1])
 				B[i]++;
-			if (gridEnd.arr[j/3+1][j % 3+1] && gridEnd.arr[i/3+1][i % 3+1] && gridEnd.arr[j/3+1][j % 3+1] < gridEnd.arr[i/3+1][i % 3+1])
+			if (gridEnd.arr[j / 3 + 1][j % 3 + 1] && gridEnd.arr[i / 3 + 1][i % 3 + 1] && gridEnd.arr[j / 3 + 1][j % 3 + 1] < gridEnd.arr[i / 3 + 1][i % 3 + 1])
 				E[i]++;
 		}
 		ansBegin += B[i];
@@ -144,13 +152,13 @@ bool has_solution(array gridBegin, array gridEnd) {
 	delete[] B;
 	delete[] E;
 
-	if ((ansBegin + ansEnd)%2 == 0)//同奇同偶
+	if ((ansBegin + ansEnd) % 2 == 0)//同奇同偶
 		return true;
 	else
 		return false;
 }
 
-void random_initial(array& gridBegin,array& gridEnd) {
+void random_initial(array& gridBegin, array& gridEnd) {
 
 	gridBegin.step = 0;
 	gridEnd.step = 0;
@@ -161,7 +169,7 @@ void random_initial(array& gridBegin,array& gridEnd) {
 	//0-8随机
 	srand((unsigned)time(NULL));
 	//num = 3*3
-	int num = (size1-1)*(size2 - 1);
+	int num = (size1 - 1) * (size2 - 1);
 	int* shuffleBegin = new int[num];
 	int* shuffleEnd = new int[num];
 	for (int i = 0; i < num; i++) {
@@ -182,7 +190,7 @@ void random_initial(array& gridBegin,array& gridEnd) {
 			shuffleBegin[max] = -1;
 		}
 	}
-	
+
 	while (1) {
 
 		for (int i = 0; i < num; i++) {
@@ -205,7 +213,7 @@ void random_initial(array& gridBegin,array& gridEnd) {
 		}
 		//检查是否可以开局
 		bool ok = true;
-		ok = has_solution(gridBegin,gridEnd);
+		ok = has_solution(gridBegin, gridEnd);
 		if (ok)
 		{
 			delete[] shuffleBegin;
@@ -219,7 +227,7 @@ void random_initial(array& gridBegin,array& gridEnd) {
 }
 
 //文件按照先开局后终局，空格或换行间隔构成
-int personal_initial(array& gridBegin, array& gridEnd,const std::string path)
+int personal_initial(array& gridBegin, array& gridEnd, const std::string path)
 {
 	gridBegin.step = 0;
 	gridEnd.step = 0;

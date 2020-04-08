@@ -88,7 +88,7 @@ struct foundState
 //配合优先队列，重载小于号将评估值作为比较对象，小根堆
 struct nodeState
 {
-	int value;
+	double value;
 	array state;
 	bool operator < (const nodeState& a) const
 	{
@@ -113,10 +113,12 @@ const int NO_SOLUTION = -2;
 
 //判断两个状态是否相等
 bool isEqual(array& grid1, array& grid2);
-//评估函数，目前mode=1为不相同个数的评估，mode=2为曼哈顿距离意义下的评估
-int calculateValue(array& curState, array& endState, int mode = 2);
+//评估函数，目前mode=1为不相同个数的评估，mode=2为曼哈顿距离意义下的评估，mode=3为欧几里得距离评估
+//取消默认参数，防止不正常的调用
+double calculateValue(array& curState, array& endState, int mode);
 //寻找下一个状态
-void nextState(array& curState, array& endState, priQueue& qu, map& foundMap);
+//增加参数mode，保证调用评估函数的时候不会一直使用默认的参数
+void nextState(array& curState, array& endState, priQueue& qu, map& foundMap,int mode);
 //返回存储的路径,防止构造函数花费太多时间因此使用引用传递
 void findRoute(array& beginState, array& endState, map& foundMap, std::deque<foundState>& route);
 //判断对应开局和终局是否有解

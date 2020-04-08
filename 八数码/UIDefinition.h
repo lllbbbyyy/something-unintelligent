@@ -49,8 +49,9 @@ const wchar_t CURRENT_STATUS[] = L"当前局面";
 const wchar_t FINAL_STATUS[] = L"目标局面";
 const wchar_t SELECTED_FUNCTION[] = L"估价函数：";
 
-const wchar_t FUNCTION1[] = L"function1";
-const wchar_t FUNCTION2[] = L"function2";
+const wchar_t FUNCTION1[] = L"不在位棋子数";
+const wchar_t FUNCTION2[] = L"曼哈顿距离";
+const wchar_t FUNCTION3[] = L"欧几里得距离";
 
 const wchar_t PLAY[] = L"手玩模式";
 const wchar_t DISPLAY[] = L"演示模式";

@@ -81,8 +81,8 @@ int main()
 	int function = 0;
 	if (pattern == 1) {
 		//选择启发式函数
-		const wchar_t* functions[] = { FUNCTION1,FUNCTION2 };
-		function = select_initial(2,functions);
+		const wchar_t* functions[] = { FUNCTION1,FUNCTION2,FUNCTION3 };
+		function = select_initial(3,functions);
 	}
 
 	//选择随机开局或手动开局
@@ -122,7 +122,7 @@ int main()
 		while (!isEqual(gridCurr.state, gridEnd))
 		{
 			//寻找下一层节点
-			nextState(gridCurr.state, gridEnd, qu, foundMap);
+			nextState(gridCurr.state, gridEnd, qu, foundMap, function + 1);
 			gridCurr = qu.top();
 			qu.pop();
 			numFoundNode++;
@@ -130,16 +130,18 @@ int main()
 		}
 		//结束计时
 		clockEnd = clock();
-		milSec = (double)(clockEnd - clockStart) * 1000 / CLOCKS_PER_SEC;
-		//输出深度信息，已扩展节点，未扩展节点
-		std::cout << gridCurr.value << std::endl << numFoundNode << std::endl << qu.size() << std::endl;
+		milSec = ((double)clockEnd - (double)clockStart) * 1000 / CLOCKS_PER_SEC;
+		//寻找路径
 		std::deque<foundState> route;
 		findRoute(gridBegin, gridEnd, foundMap, route);
+		//输出深度信息，已扩展节点，未扩展节点
+		std::cout << route.size()-1 << std::endl << numFoundNode << std::endl << qu.size() << std::endl;
+
 		//开始画图
 		int stepCnt = 0;
 		bool mDone = false;
 		bool isPause = false;
-		init(dispMode, function, milSec, gridCurr.value, numFoundNode, (int)qu.size());
+		init(dispMode, function, milSec, int(route.size()-1), numFoundNode, (int)qu.size());
 		std::thread thr(getMouseStatus, std::ref(mDone), std::ref(isPause));
 		drawFinalStatus(foundState(gridEnd));
 		for (auto it : route)

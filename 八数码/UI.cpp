@@ -29,7 +29,19 @@ void init(const int dispMode, const int selFun, const double searchTime, const i
 	_stprintf_s(s, _T("%Ts"), dispMode ? MANUAL_PLAY : AUTO_PLAY);
 	outtextxy(xText, yText, s);
 	yText += fontSize;
-	_stprintf_s(s, _T("%Ts%Ts"), SELECTED_FUNCTION, selFun ? FUNCTION2 : FUNCTION1);
+	if (selFun == 0)
+	{
+		_stprintf_s(s, _T("%Ts%Ts"), SELECTED_FUNCTION, FUNCTION1);
+	}
+	else if (selFun == 1)
+	{
+		_stprintf_s(s, _T("%Ts%Ts"), SELECTED_FUNCTION, FUNCTION2);
+	}
+	else if (selFun == 2)
+	{
+		_stprintf_s(s, _T("%Ts%Ts"), SELECTED_FUNCTION, FUNCTION3);
+	}
+
 	outtextxy(xText, yText, s);
 	yText += fontSize;
 	_stprintf_s(s, _T("%Ts%.2f%Ts"), SEARCH_TIME, searchTime, MILLISECOND);
@@ -81,7 +93,7 @@ void drawFinalStatus(const foundState& paint)
 	setfillcolor(BLUE);
 	for(int i = 1; i < (int)paint.arr.size(); i++)
 	{
-		for(int j = 1; j < paint.arr[0].size(); j++)
+		for(int j = 1; j < (int)paint.arr[0].size(); j++)
 		{
 			int reLeft = xFrameRight + (2 * j - 1) * gapBlock + (j - 1) * lengthBlock;
 			int reTop = yFrameRight + (2 * i - 1) * gapBlock + (i - 1) * lengthBlock;
@@ -100,7 +112,7 @@ void paintingDraw(foundState& paint)
 	setfillcolor(BLUE);
 	for (int i = 1; i < (int)paint.arr.size(); i++)
 	{
-		for (int j = 1; j < paint.arr[0].size(); j++)
+		for (int j = 1; j < (int)paint.arr[0].size(); j++)
 		{
 			int reLeft = xFrameLeft + (2 * j - 1) * gapBlock + (j - 1) * lengthBlock;
 			int reTop = yFrameLeft + (2 * i - 1) * gapBlock + (i - 1) * lengthBlock;
@@ -117,7 +129,7 @@ void paintingDraw(array& paint) {
 	setfillcolor(BLUE);
 	for (int i = 1; i < (int)paint.arr.size(); i++)
 	{
-		for (int j = 1; j < paint.arr[0].size(); j++)
+		for (int j = 1; j < (int)paint.arr[0].size(); j++)
 		{
 			int reLeft = xFrameLeft + (2 * j - 1) * gapBlock + (j - 1) * lengthBlock;
 			int reTop = yFrameLeft + (2 * i - 1) * gapBlock + (i - 1) * lengthBlock;
