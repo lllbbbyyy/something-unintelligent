@@ -257,7 +257,7 @@ int personal_initial(array& gridBegin, array& gridEnd, const std::string path)
 			in >> gridEnd.arr[i][j];
 		}
 	}
-
+	in.close();
 	bool ok = has_solution(gridBegin, gridEnd);
 	if (!ok)
 		return NO_SOLUTION;
