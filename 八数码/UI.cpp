@@ -21,7 +21,7 @@ void init(const int dispMode, const int selFun, const double searchTime, const i
 	fillrectangle(xFrameLeft, yFrameLeft, xFrameLeft + lengthFrame, yFrameLeft + lengthFrame);
 	fillrectangle(xFrameRight, yFrameRight, xFrameRight + lengthFrame, yFrameRight + lengthFrame);
 	settextcolor(WHITE);
-	_stprintf_s(s, _T("%Ts"),CURRENT_STATUS);
+	_stprintf_s(s, _T("%Ts"), CURRENT_STATUS);
 	outtextxy(xFrameLeft, yFrameLeft - fontSize, s);
 	_stprintf_s(s, _T("%Ts"), FINAL_STATUS);
 	outtextxy(xFrameRight, yFrameRight - fontSize, s);
@@ -67,13 +67,13 @@ void init(const int dispMode, const int selFun, const double searchTime, const i
 	putimage(xButtonContinue, yButton, &button);
 	putimage(xButtonPause, yButton, &button);
 
-	RECT rContinue = { xButtonContinue, yButton,xButtonContinue+widthButton, yButton+heightButton };
+	RECT rContinue = { xButtonContinue, yButton,xButtonContinue + widthButton, yButton + heightButton };
 	RECT rPause = { xButtonPause, yButton,xButtonPause + widthButton, yButton + heightButton };
 	settextcolor(WHITE);
 	setbkmode(TRANSPARENT);
 	_stprintf_s(s, _T("%Ts"), CONTINUE);
 	drawtext(s, &rContinue, DT_CENTER | DT_VCENTER | DT_SINGLELINE | DT_EDITCONTROL);
-	
+
 	setbkmode(TRANSPARENT);
 	_stprintf_s(s, _T("%Ts"), PAUSE);
 	drawtext(s, &rPause, DT_CENTER | DT_VCENTER | DT_SINGLELINE | DT_EDITCONTROL);
@@ -84,7 +84,7 @@ void end()
 	closegraph();
 }
 //画一个数字，这个可以后面用图片等代替
-void digitDraw(int num,int reLeft,int reTop,int reRight,int reBottom)
+void digitDraw(int num, int reLeft, int reTop, int reRight, int reBottom)
 {
 	RECT r = { reLeft,reTop,reRight,reBottom };
 	char numc[2];
@@ -95,16 +95,16 @@ void digitDraw(int num,int reLeft,int reTop,int reRight,int reBottom)
 	setbkmode(TRANSPARENT);
 	settextcolor(WHITE);
 	settextstyle(lengthBlock, 0, _T("宋体"));
-	if(numC[0]!='0')
+	if (numC[0] != '0')
 		drawtext(numC, &r, DT_CENTER | DT_VCENTER | DT_SINGLELINE | DT_EDITCONTROL);
 }
 //绘制目标状态
 void drawFinalStatus(const foundState& paint)
 {
 	setfillcolor(BLACK);
-	for(int i = 1; i < (int)paint.arr.size(); i++)
+	for (int i = 1; i < (int)paint.arr.size(); i++)
 	{
-		for(int j = 1; j < (int)paint.arr[0].size(); j++)
+		for (int j = 1; j < (int)paint.arr[0].size(); j++)
 		{
 			int reLeft = xFrameRight + (2 * j - 1) * gapBlock + (j - 1) * lengthBlock;
 			int reTop = yFrameRight + (2 * i - 1) * gapBlock + (i - 1) * lengthBlock;
@@ -215,7 +215,7 @@ int select_function() {
 }
 */
 
-int select_initial(int button_count,const wchar_t** text) {
+int select_initial(int button_count, const wchar_t** text) {
 	//画大框
 	initgraph(widthWindow, heightWindow);
 	//灰色背景色
@@ -227,20 +227,20 @@ int select_initial(int button_count,const wchar_t** text) {
 	settextcolor(WHITE);
 	settextstyle(fontSize, 0, _T("宋体"));
 	IMAGE background;
-	loadimage(&background,L"./background.JPG",widthWindow,heightWindow);
+	loadimage(&background, L"./background.JPG", widthWindow, heightWindow);
 	putimage(0, 0, &background);
 	//画两个选择框
 	int num = button_count;
 	int* button_x = new int[num];
 	int* button_y = new int[num];
-	const int button_width = widthWindow / (2*num+1);
+	const int button_width = widthWindow / (2 * num + 1);
 	const int button_height = heightWindow / 8;
 	setfillcolor(BLACK);
 	for (int i = 0; i < num; i++) {
-		button_x[i] = widthWindow * (2 * i + 1) / (2*num+1);
-		button_y[i] = heightWindow / 2;
+		button_x[i] = widthWindow * (2 * i + 1) / (2 * num + 1);
+		button_y[i] = heightWindow * 2 / 3;
 		IMAGE button;
-		loadimage(&button, L"./button.jpg", button_width, button_height,true);
+		loadimage(&button, L"./button.jpg", button_width, button_height, true);
 		putimage(button_x[i], button_y[i], &button);
 		//fillrectangle(button_x[i], button_y[i], button_x[i] + button_width, button_y[i] + button_height);
 	}
@@ -273,7 +273,7 @@ int select_initial(int button_count,const wchar_t** text) {
 	}
 }
 
-void init_play(array gridBegin,array gridEnd) {
+void init_play(array gridBegin, array gridEnd) {
 	initgraph(widthWindow, heightWindow);
 	//灰色背景色
 	setbkcolor(LIGHTGRAY);
@@ -295,7 +295,7 @@ void init_play(array gridBegin,array gridEnd) {
 	outtextxy(xFrameLeft, yFrameLeft - fontSize, s);
 	_stprintf_s(s, _T("%Ts"), FINAL_STATUS);
 	outtextxy(xFrameRight, yFrameRight - fontSize, s);
-	
+
 	paintingDraw(gridBegin);
 	drawFinalStatus(gridEnd);
 }
@@ -353,7 +353,7 @@ bool move(array& current, int col, int line) {
 
 }
 
-void click_to_next(array& current){
+void click_to_next(array& current) {
 	//判断鼠标点击事件
 	int x, y = 0;
 	MOUSEMSG m;
@@ -368,7 +368,7 @@ void click_to_next(array& current){
 
 			int col = 0, line = 0;
 			//x,y匹配为行列
-			bool valid = match(current,x, y, col, line);
+			bool valid = match(current, x, y, col, line);
 			if (!valid)
 				continue;
 
