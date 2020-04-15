@@ -11,20 +11,25 @@ void init(const int dispMode, const int selFun, const double searchTime, const i
 	//设置字体
 	settextstyle(fontSize, 0, _T("宋体"));
 	TCHAR s[1024];
+
+	IMAGE background;
+	loadimage(&background, L"./background.JPG", widthWindow, heightWindow);
+	putimage(0, 0, &background);
+
 	//画左右框架
-	setfillcolor(RED);
+	setfillcolor(BLACK);
 	fillrectangle(xFrameLeft, yFrameLeft, xFrameLeft + lengthFrame, yFrameLeft + lengthFrame);
 	fillrectangle(xFrameRight, yFrameRight, xFrameRight + lengthFrame, yFrameRight + lengthFrame);
-	settextcolor(BLACK);
+	settextcolor(WHITE);
 	_stprintf_s(s, _T("%Ts"),CURRENT_STATUS);
 	outtextxy(xFrameLeft, yFrameLeft - fontSize, s);
 	_stprintf_s(s, _T("%Ts"), FINAL_STATUS);
 	outtextxy(xFrameRight, yFrameRight - fontSize, s);
 	//画文字框
-	setfillcolor(WHITE);
+	setfillcolor(BLACK);
 	fillrectangle(xFrameStatus, yFrameStatus, xFrameStatus + widthFrameStatus, yFrameStatus + heightFrameStatus);
 	//显示全局信息
-	setbkcolor(WHITE);
+	setbkcolor(BLACK);
 	int xText = xTextBegin, yText = yTextTop;
 	_stprintf_s(s, _T("%Ts"), dispMode ? MANUAL_PLAY : AUTO_PLAY);
 	outtextxy(xText, yText, s);
@@ -56,15 +61,15 @@ void init(const int dispMode, const int selFun, const double searchTime, const i
 	_stprintf_s(s, _T("%Ts%d"), UNVISITED_NUMBER, unvisNum);
 	outtextxy(xText, yText, s);
 	//画控制按钮
-	setfillcolor(GREEN);
+	setfillcolor(BLACK);
 	fillrectangle(xButtonContinue, yButton, xButtonContinue + widthButton, yButton + heightButton);
-	setfillcolor(RED);
+	setfillcolor(BLACK);
 	fillrectangle(xButtonPause, yButton, xButtonPause + widthButton, yButton + heightButton);
 	settextcolor(WHITE);
-	setbkcolor(GREEN);
+	setbkcolor(BLACK);
 	_stprintf_s(s, _T("%Ts"), CONTINUE);
 	outtextxy(xButtonContinue + 2, yButton + 2, s);
-	setbkcolor(RED);
+	setbkcolor(BLACK);
 	_stprintf_s(s, _T("%Ts"), PAUSE);
 	outtextxy(xButtonPause + 2, yButton + 2, s);
 }
@@ -90,7 +95,7 @@ void digitDraw(int num,int reLeft,int reTop,int reRight,int reBottom)
 //绘制目标状态
 void drawFinalStatus(const foundState& paint)
 {
-	setfillcolor(BLUE);
+	setfillcolor(BLACK);
 	for(int i = 1; i < (int)paint.arr.size(); i++)
 	{
 		for(int j = 1; j < (int)paint.arr[0].size(); j++)
@@ -109,7 +114,7 @@ void drawFinalStatus(const foundState& paint)
 //绘制一次状态画面
 void paintingDraw(foundState& paint)
 {
-	setfillcolor(BLUE);
+	setfillcolor(BLACK);
 	for (int i = 1; i < (int)paint.arr.size(); i++)
 	{
 		for (int j = 1; j < (int)paint.arr[0].size(); j++)
@@ -126,7 +131,7 @@ void paintingDraw(foundState& paint)
 	}
 }
 void paintingDraw(array& paint) {
-	setfillcolor(BLUE);
+	setfillcolor(BLACK);
 	for (int i = 1; i < (int)paint.arr.size(); i++)
 	{
 		for (int j = 1; j < (int)paint.arr[0].size(); j++)
@@ -146,8 +151,8 @@ void paintingDraw(array& paint) {
 void updateStatus(const int step)
 {
 	TCHAR s[1024];
-	settextcolor(BLACK);
-	setbkcolor(WHITE);
+	settextcolor(WHITE);
+	setbkcolor(BLACK);
 	settextstyle(fontSize, 0, _T("宋体"));
 	clearrectangle(xTextBegin, yTextMid, xTextBegin + 120, yTextMid + fontSize);
 	_stprintf_s(s, _T("%Ts%d"), CURRENT_STEP, step);
@@ -215,6 +220,9 @@ int select_initial(int button_count,const wchar_t** text) {
 	setbkcolor(BLACK);
 	settextcolor(WHITE);
 	settextstyle(fontSize, 0, _T("宋体"));
+	IMAGE background;
+	loadimage(&background,L"./background.JPG",widthWindow,heightWindow);
+	putimage(0, 0, &background);
 	//画两个选择框
 	int num = button_count;
 	int* button_x = new int[num];
@@ -258,11 +266,16 @@ void init_play(array gridBegin,array gridEnd) {
 	setbkcolor(LIGHTGRAY);
 	cleardevice();
 	//设置字体
-	settextcolor(BLACK);
+	settextcolor(WHITE);
 	settextstyle(fontSize, 0, _T("宋体"));
+
+	IMAGE background;
+	loadimage(&background, L"./background.JPG", widthWindow, heightWindow);
+	putimage(0, 0, &background);
+
 	TCHAR s[1024];
 	//画左右框架
-	setfillcolor(RED);
+	setfillcolor(BLACK);
 	fillrectangle(xFrameLeft, yFrameLeft, xFrameLeft + lengthFrame, yFrameLeft + lengthFrame);
 	fillrectangle(xFrameRight, yFrameRight, xFrameRight + lengthFrame, yFrameRight + lengthFrame);
 	_stprintf_s(s, _T("%Ts"), CURRENT_STATUS);
