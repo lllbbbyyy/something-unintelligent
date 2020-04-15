@@ -60,18 +60,23 @@ void init(const int dispMode, const int selFun, const double searchTime, const i
 	yText += fontSize;
 	_stprintf_s(s, _T("%Ts%d"), UNVISITED_NUMBER, unvisNum);
 	outtextxy(xText, yText, s);
-	//画控制按钮
-	setfillcolor(BLACK);
-	fillrectangle(xButtonContinue, yButton, xButtonContinue + widthButton, yButton + heightButton);
-	setfillcolor(BLACK);
-	fillrectangle(xButtonPause, yButton, xButtonPause + widthButton, yButton + heightButton);
+
+	//加载控制按钮图片
+	IMAGE button;
+	loadimage(&button, L"./button.jpg", widthButton, heightButton, true);
+	putimage(xButtonContinue, yButton, &button);
+	putimage(xButtonPause, yButton, &button);
+
+	RECT rContinue = { xButtonContinue, yButton,xButtonContinue+widthButton, yButton+heightButton };
+	RECT rPause = { xButtonPause, yButton,xButtonPause + widthButton, yButton + heightButton };
 	settextcolor(WHITE);
-	setbkcolor(BLACK);
+	setbkmode(TRANSPARENT);
 	_stprintf_s(s, _T("%Ts"), CONTINUE);
-	outtextxy(xButtonContinue + 2, yButton + 2, s);
-	setbkcolor(BLACK);
+	drawtext(s, &rContinue, DT_CENTER | DT_VCENTER | DT_SINGLELINE | DT_EDITCONTROL);
+	
+	setbkmode(TRANSPARENT);
 	_stprintf_s(s, _T("%Ts"), PAUSE);
-	outtextxy(xButtonPause + 2, yButton + 2, s);
+	drawtext(s, &rPause, DT_CENTER | DT_VCENTER | DT_SINGLELINE | DT_EDITCONTROL);
 }
 //图形界面释放
 void end()
@@ -90,7 +95,8 @@ void digitDraw(int num,int reLeft,int reTop,int reRight,int reBottom)
 	setbkmode(TRANSPARENT);
 	settextcolor(WHITE);
 	settextstyle(lengthBlock, 0, _T("宋体"));
-	drawtext(numC, &r, DT_CENTER | DT_VCENTER | DT_SINGLELINE | DT_EDITCONTROL);
+	if(numC[0]!='0')
+		drawtext(numC, &r, DT_CENTER | DT_VCENTER | DT_SINGLELINE | DT_EDITCONTROL);
 }
 //绘制目标状态
 void drawFinalStatus(const foundState& paint)
@@ -233,15 +239,22 @@ int select_initial(int button_count,const wchar_t** text) {
 	for (int i = 0; i < num; i++) {
 		button_x[i] = widthWindow * (2 * i + 1) / (2*num+1);
 		button_y[i] = heightWindow / 2;
-		fillrectangle(button_x[i], button_y[i], button_x[i] + button_width, button_y[i] + button_height);
+		IMAGE button;
+		loadimage(&button, L"./button.jpg", button_width, button_height,true);
+		putimage(button_x[i], button_y[i], &button);
+		//fillrectangle(button_x[i], button_y[i], button_x[i] + button_width, button_y[i] + button_height);
 	}
 
 	//+1避免文本框遮挡边框线
 	TCHAR s[1024];
 	for (int i = 0; i < num; i++)
 	{
+		RECT r = { button_x[i],button_y[i],button_x[i] + button_width,button_y[i] + button_height };
+		setbkmode(TRANSPARENT);
 		_stprintf_s(s, _T("%Ts"), text[i]);
-		outtextxy(button_x[i] + 1, button_y[i] + 1, s);
+
+		//outtextxy(button_x[i] + button_width/2, button_y[i] + button_height/2, s);
+		drawtext(s, &r, DT_CENTER | DT_VCENTER | DT_SINGLELINE | DT_EDITCONTROL);
 	}
 	//判断鼠标点击事件
 	MOUSEMSG m;
