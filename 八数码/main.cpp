@@ -75,99 +75,106 @@ int main()
 	array gridBegin;
 	array gridEnd;
 
-	//选择手玩模式或者演示模式
-	const wchar_t* patterns[] = { PLAY,DISPLAY };
-	int pattern = select_initial(2,patterns);
-	int function = 0;
-	if (pattern == 1) {
-		//选择启发式函数
-		const wchar_t* functions[] = { FUNCTION1,FUNCTION2,FUNCTION3 };
-		function = select_initial(3,functions);
-	}
+	int isEnd = 0;
 
-	//选择随机开局或手动开局
-	const wchar_t* initials[] = { RANDOM,PERSONAL };
-	int choice = select_initial(2,initials);
-	//1.随机开局 2.手动开局
-	if (choice == RANDOM_INITIAL)
-		random_initial(gridBegin, gridEnd);
-	else if (choice == PERSONAL_INITIAL)
+	while(!isEnd)
 	{
-		int ans = personal_initial(gridBegin, gridEnd, PATH);
-		//todo:错误状态无提示
-		if (ans == NO_INPUT_FOUND || ans == NO_SOLUTION)
-			return 0;
+		//选择手玩模式或者演示模式
+		const wchar_t* patterns[] = { PLAY, DISPLAY };
+		int pattern = select_initial(2, patterns);
+		int function = 0;
+		if(pattern == 1) {
+			//选择启发式函数
+			const wchar_t* functions[] = { FUNCTION1, FUNCTION2, FUNCTION3 };
+			function = select_initial(3, functions);
+		}
+
+		//选择随机开局或手动开局
+		const wchar_t* initials[] = { RANDOM, PERSONAL };
+		int choice = select_initial(2, initials);
+		//1.随机开局 2.手动开局
+		if(choice == RANDOM_INITIAL)
+			random_initial(gridBegin, gridEnd);
+		else if(choice == PERSONAL_INITIAL)
+		{
+			int ans = personal_initial(gridBegin, gridEnd, PATH);
+			//todo:错误状态无提示
+			if(ans == NO_INPUT_FOUND || ans == NO_SOLUTION)
+				return 0;
+		}
+
+		//演示模式
+		if(pattern == 1) {
+			//选择自动演示或手动演示
+			const wchar_t* dispModeText[] = { AUTO_PLAY, MANUAL_PLAY };
+			//0.自动演示 1.手动演示
+			int dispMode = select_initial(2, dispModeText);
+			//优先队列，以评估代价为关键词的小根堆，同时存储了局面
+			priQueue qu;
+			//存放已经遍历过的节点，相当于剪枝，注意不同于std::map
+			map foundMap;
+			//节点存放当前信息
+			nodeState gridCurr = { calculateValue(gridBegin, gridEnd, function + 1), gridBegin };
+			//记录已经遍历的节点数量
+			int numFoundNode = 0;
+			//用于计时
+			clock_t clockStart, clockEnd;
+			double milSec;
+			//开始计时
+			clockStart = clock();
+			//与最终局面不相同时
+			while(!isEqual(gridCurr.state, gridEnd))
+			{
+				//寻找下一层节点
+				nextState(gridCurr.state, gridEnd, qu, foundMap, function + 1);
+				gridCurr = qu.top();
+				qu.pop();
+				numFoundNode++;
+				//	print(gridCurr);
+			}
+			//结束计时
+			clockEnd = clock();
+			milSec = ((double)clockEnd - (double)clockStart) * 1000 / CLOCKS_PER_SEC;
+			//寻找路径
+			std::deque<foundState> route;
+			findRoute(gridBegin, gridEnd, foundMap, route);
+			//输出深度信息，已扩展节点，未扩展节点
+			std::cout << route.size() - 1 << std::endl << numFoundNode << std::endl << qu.size() << std::endl;
+
+			//开始画图
+			int stepCnt = 0;
+			bool mDone = false;
+			bool isPause = false;
+			init(dispMode, function, milSec, int(route.size() - 1), numFoundNode, (int)qu.size());
+			std::thread thr(getMouseStatus, std::ref(mDone), std::ref(isPause));
+			drawFinalStatus(foundState(gridEnd));
+			for(auto it : route)
+			{
+				paintingDraw(it);
+				updateStatus(stepCnt++);
+				if(dispMode == 0) Sleep(1000);
+				else if(dispMode == 1) _getch();
+				while(dispMode == 0 && isPause);
+			}
+			mDone = true;
+			thr.detach();
+		}
+		//手玩模式
+		else if(pattern == 0) {
+			init_play(gridBegin, gridEnd);
+			array gridCurrent = gridBegin;
+			while(!isEqual(gridCurrent, gridEnd)) {
+				click_to_next(gridCurrent);
+				paintingDraw(gridCurrent);
+			}
+		}
+
+		const wchar_t* endHints[] = { RESTAER_PROG, END_PROG };
+		isEnd = select_initial(2, endHints);
 	}
 
-	//演示模式
-	if (pattern == 1) {
-		//选择自动演示或手动演示
-		const wchar_t* dispModeText[] = { AUTO_PLAY, MANUAL_PLAY };
-		//0.自动演示 1.手动演示
-		int dispMode = select_initial(2, dispModeText);
-		//优先队列，以评估代价为关键词的小根堆，同时存储了局面
-		priQueue qu;
-		//存放已经遍历过的节点，相当于剪枝，注意不同于std::map
-		map foundMap;
-		//节点存放当前信息
-		nodeState gridCurr = { calculateValue(gridBegin,gridEnd,function+1),gridBegin };
-		//记录已经遍历的节点数量
-		int numFoundNode = 0;
-		//用于计时
-		clock_t clockStart, clockEnd;
-		double milSec;
-		//开始计时
-		clockStart = clock();
-		//与最终局面不相同时
-		while (!isEqual(gridCurr.state, gridEnd))
-		{
-			//寻找下一层节点
-			nextState(gridCurr.state, gridEnd, qu, foundMap, function + 1);
-			gridCurr = qu.top();
-			qu.pop();
-			numFoundNode++;
-			//	print(gridCurr);
-		}
-		//结束计时
-		clockEnd = clock();
-		milSec = ((double)clockEnd - (double)clockStart) * 1000 / CLOCKS_PER_SEC;
-		//寻找路径
-		std::deque<foundState> route;
-		findRoute(gridBegin, gridEnd, foundMap, route);
-		//输出深度信息，已扩展节点，未扩展节点
-		std::cout << route.size()-1 << std::endl << numFoundNode << std::endl << qu.size() << std::endl;
-
-		//开始画图
-		int stepCnt = 0;
-		bool mDone = false;
-		bool isPause = false;
-		init(dispMode, function, milSec, int(route.size()-1), numFoundNode, (int)qu.size());
-		std::thread thr(getMouseStatus, std::ref(mDone), std::ref(isPause));
-		drawFinalStatus(foundState(gridEnd));
-		for (auto it : route)
-		{
-			paintingDraw(it);
-			updateStatus(stepCnt++);
-			if (dispMode == 0) Sleep(1000);
-			else if (dispMode == 1) _getch();
-			while(dispMode == 0 && isPause);
-		}
-		mDone = true;
-		thr.join();
-		system("pause");
-		end();
-		return 0;
-	}
-	//手玩模式
-	else if(pattern == 0) {
-		init_play(gridBegin,gridEnd);
-		array gridCurrent = gridBegin;
-		while (!isEqual(gridCurrent, gridEnd)) {
-			click_to_next(gridCurrent);
-			paintingDraw(gridCurrent);
-		}
-		return 0;
-	}	
+	end();
+	return 0;
 }
 /*
 8 6 7

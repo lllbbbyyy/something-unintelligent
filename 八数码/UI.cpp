@@ -83,7 +83,7 @@ void end()
 {
 	closegraph();
 }
-//画一个数字，这个可以后面用图片等代替
+//画一个数字
 void digitDraw(int num, int reLeft, int reTop, int reRight, int reBottom)
 {
 	RECT r = { reLeft,reTop,reRight,reBottom };

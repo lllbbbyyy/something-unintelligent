@@ -21,7 +21,7 @@ const int gapBlock			= 10;
 const int lengthBlock		= 80;
 //状态框宽高
 const int widthFrameStatus	= 300;
-const int heightFrameStatus = 500;
+const int heightFrameStatus = 300;
 //状态框左上位置
 const int yFrameStatus		= (heightWindow - heightFrameStatus) / 2;
 const int xFrameStatus		= 2 * lengthFrame + 3 * gapFrame;
@@ -29,7 +29,7 @@ const int xFrameStatus		= 2 * lengthFrame + 3 * gapFrame;
 const int fontSize			= 20;
 //文字起始位置
 const int xTextBegin		= xFrameStatus + 20;
-const int yTextTop			= yFrameLeft;
+const int yTextTop			= yFrameLeft + 20 + 2;
 const int yTextMid			= heightWindow / 2;
 //按钮宽高
 const int widthButton		= 120;
@@ -64,6 +64,10 @@ const wchar_t MANUAL_PLAY[] = L"手动演示";
 
 const wchar_t CONTINUE[] = L"继续";
 const wchar_t PAUSE[] = L"暂停";
+
+const wchar_t DISPLAY_END[] = L"操作/演示结束";
+const wchar_t RESTAER_PROG[] = L"返回开始界面";
+const wchar_t END_PROG[] = L"结束";
 
 //函数声明
 
