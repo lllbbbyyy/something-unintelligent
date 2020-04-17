@@ -46,24 +46,18 @@ void print(foundState& tem)
 	system("pause");
 }
 
-//判断鼠标位置是否在矩形内
-bool inRect(int x, int y, int left, int top, int width, int height)
-{
-	return (x >= left && x <= left + width && y >= top && y <= top + height);
-}
-
 //子线程内捕获鼠标事件
-void getMouseStatus(bool &done, volatile bool &isPause)
+void getMouseStatus(bool& done, volatile bool& isPause,int dispMode)
 {
 	MOUSEMSG m;
-	while(!done)
+	while (!done&&dispMode==0)
 	{
 		m = GetMouseMsg();
-		if(m.uMsg == WM_LBUTTONDOWN)
+		if (m.uMsg == WM_LBUTTONDOWN)
 		{
-			if(inRect(m.x, m.y, xButtonContinue, yButton, widthButton, heightButton))
+			if (inRect(m.x, m.y, xButtonContinue, yButton, widthButton, heightButton))
 				isPause = false;
-			if(inRect(m.x, m.y, xButtonPause, yButton, widthButton, heightButton))
+			if (inRect(m.x, m.y, xButtonPause, yButton, widthButton, heightButton))
 				isPause = true;
 		}
 	}
@@ -77,13 +71,18 @@ int main()
 
 	int isEnd = 0;
 
-	while(!isEnd)
+	while (!isEnd)
 	{
-		//选择手玩模式或者演示模式
-		const wchar_t* patterns[] = { PLAY, DISPLAY };
-		int pattern = select_initial(2, patterns);
+		//选择手玩模式或者演示模式或者退出
+		const wchar_t* patterns[] = { PLAY, DISPLAY,END_PROG };
+		int pattern = select_initial(3, patterns);
+		//直接退出
+		if (pattern == 2)
+		{
+			break;
+		}
 		int function = 0;
-		if(pattern == 1) {
+		if (pattern == 1) {
 			//选择启发式函数
 			const wchar_t* functions[] = { FUNCTION1, FUNCTION2, FUNCTION3 };
 			function = select_initial(3, functions);
@@ -93,18 +92,18 @@ int main()
 		const wchar_t* initials[] = { RANDOM, PERSONAL };
 		int choice = select_initial(2, initials);
 		//1.随机开局 2.手动开局
-		if(choice == RANDOM_INITIAL)
+		if (choice == RANDOM_INITIAL)
 			random_initial(gridBegin, gridEnd);
-		else if(choice == PERSONAL_INITIAL)
+		else if (choice == PERSONAL_INITIAL)
 		{
 			int ans = personal_initial(gridBegin, gridEnd, PATH);
 			//todo:错误状态无提示
-			if(ans == NO_INPUT_FOUND || ans == NO_SOLUTION)
-				return 0;
+			if (ans == NO_INPUT_FOUND || ans == NO_SOLUTION)
+				continue;
 		}
 
 		//演示模式
-		if(pattern == 1) {
+		if (pattern == 1) {
 			//选择自动演示或手动演示
 			const wchar_t* dispModeText[] = { AUTO_PLAY, MANUAL_PLAY };
 			//0.自动演示 1.手动演示
@@ -123,7 +122,7 @@ int main()
 			//开始计时
 			clockStart = clock();
 			//与最终局面不相同时
-			while(!isEqual(gridCurr.state, gridEnd))
+			while (!isEqual(gridCurr.state, gridEnd))
 			{
 				//寻找下一层节点
 				nextState(gridCurr.state, gridEnd, qu, foundMap, function + 1);
@@ -146,32 +145,65 @@ int main()
 			bool mDone = false;
 			volatile bool isPause = false;
 			init(dispMode, function, milSec, int(route.size() - 1), numFoundNode, (int)qu.size());
-			std::thread thr(getMouseStatus, std::ref(mDone), std::ref(isPause));
+			std::thread thr(getMouseStatus, std::ref(mDone), std::ref(isPause),dispMode);
 			drawFinalStatus(foundState(gridEnd));
-			for(auto it : route)
+			for (auto it : route)
 			{
 				paintingDraw(it);
 				updateStatus(stepCnt++);
-				if(dispMode == 0) Sleep(1000);
-				else if(dispMode == 1) _getch();
-				while(dispMode == 0 && isPause);
+				if (dispMode == 0) Sleep(1000);
+				else if (dispMode == 1)
+				{
+					MOUSEMSG m;
+					FlushMouseMsgBuffer();
+					while (1)
+					{
+						//	return 0;
+						m = GetMouseMsg();
+						//	return 0;
+						//	std::cout << 1;
+						if (m.uMsg == WM_LBUTTONDOWN)
+						{
+							if (inRect(m.x, m.y, xButtonContinue, yButton, widthButton, heightButton))
+								break;
+						}
+					}
+				}
+				while (dispMode == 0 && isPause);
 			}
 			mDone = true;
-			thr.detach();
-		//	thr.join();
+			//thr.detach();
+			draw_promote();
+			thr.join();
+			isEnd = endButton();
 		}
 		//手玩模式
-		else if(pattern == 0) {
+		else if (pattern == 0) {
 			init_play(gridBegin, gridEnd);
+			draw_play_promote();
 			array gridCurrent = gridBegin;
-			while(!isEqual(gridCurrent, gridEnd)) {
-				click_to_next(gridCurrent);
+			int opt = 1;
+			while (!isEqual(gridCurrent, gridEnd)) {
+				opt=click_to_next(gridCurrent);
+				if (opt == 0)
+				{
+					isEnd = 0;
+					break;
+				}
+				else if (opt == -1)
+				{
+					isEnd = 1;
+					break;
+				}
 				paintingDraw(gridCurrent);
 			}
+			if (opt != 1)
+			{
+				continue;
+			}
+			isEnd = endButton();
 		}
 
-		const wchar_t* endHints[] = { RESTAER_PROG, END_PROG };
-		isEnd = select_initial(2, endHints);
 	}
 
 	end();

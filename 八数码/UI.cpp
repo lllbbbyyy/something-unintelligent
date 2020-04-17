@@ -13,7 +13,7 @@ void init(const int dispMode, const int selFun, const double searchTime, const i
 	TCHAR s[1024];
 
 	IMAGE background;
-	loadimage(&background, L"./background.JPG", widthWindow, heightWindow);
+	loadimage(&background, L"./images/background.JPG", widthWindow, heightWindow);
 	putimage(0, 0, &background);
 
 	//画左右框架
@@ -63,20 +63,33 @@ void init(const int dispMode, const int selFun, const double searchTime, const i
 
 	//加载控制按钮图片
 	IMAGE button;
-	loadimage(&button, L"./button.jpg", widthButton, heightButton, true);
+	loadimage(&button, L"./images/button.jpg", widthButton, heightButton, true);
 	putimage(xButtonContinue, yButton, &button);
-	putimage(xButtonPause, yButton, &button);
+	if (dispMode == 0) 
+	{
+		putimage(xButtonPause, yButton, &button);
+	}
 
 	RECT rContinue = { xButtonContinue, yButton,xButtonContinue + widthButton, yButton + heightButton };
 	RECT rPause = { xButtonPause, yButton,xButtonPause + widthButton, yButton + heightButton };
 	settextcolor(WHITE);
 	setbkmode(TRANSPARENT);
-	_stprintf_s(s, _T("%Ts"), CONTINUE);
+
+	if (dispMode == 0)
+		_stprintf_s(s, _T("%Ts"), CONTINUE);
+	else if (dispMode == 1)
+		_stprintf_s(s, _T("%Ts"), GO_ON);
+
 	drawtext(s, &rContinue, DT_CENTER | DT_VCENTER | DT_SINGLELINE | DT_EDITCONTROL);
 
 	setbkmode(TRANSPARENT);
-	_stprintf_s(s, _T("%Ts"), PAUSE);
-	drawtext(s, &rPause, DT_CENTER | DT_VCENTER | DT_SINGLELINE | DT_EDITCONTROL);
+
+	if (dispMode == 0) 
+	{
+		_stprintf_s(s, _T("%Ts"), PAUSE);
+
+		drawtext(s, &rPause, DT_CENTER | DT_VCENTER | DT_SINGLELINE | DT_EDITCONTROL);
+	}
 }
 //图形界面释放
 void end()
@@ -101,7 +114,12 @@ void digitDraw(int num, int reLeft, int reTop, int reRight, int reBottom)
 //绘制目标状态
 void drawFinalStatus(const foundState& paint)
 {
-	setfillcolor(BLACK);
+	//setfillcolor(0x434343);
+	//setfillcolor(BLACK);
+	//setfillcolor(0x271a1c);
+	//setfillcolor(0x392c43);
+	setfillcolor(RGB(31, 31, 31));
+	//setfillcolor(0x3c3229);
 	for (int i = 1; i < (int)paint.arr.size(); i++)
 	{
 		for (int j = 1; j < (int)paint.arr[0].size(); j++)
@@ -120,7 +138,9 @@ void drawFinalStatus(const foundState& paint)
 //绘制一次状态画面
 void paintingDraw(foundState& paint)
 {
-	setfillcolor(BLACK);
+	//setfillcolor(0x3c3229);
+	setfillcolor(0x3c3229);
+	//setfillcolor(RGB(31, 31, 31));
 	for (int i = 1; i < (int)paint.arr.size(); i++)
 	{
 		for (int j = 1; j < (int)paint.arr[0].size(); j++)
@@ -137,7 +157,8 @@ void paintingDraw(foundState& paint)
 	}
 }
 void paintingDraw(array& paint) {
-	setfillcolor(BLACK);
+	setfillcolor(0x3c3229);
+	//setfillcolor(RGB(31, 31, 31));
 	for (int i = 1; i < (int)paint.arr.size(); i++)
 	{
 		for (int j = 1; j < (int)paint.arr[0].size(); j++)
@@ -227,7 +248,7 @@ int select_initial(int button_count, const wchar_t** text) {
 	settextcolor(WHITE);
 	settextstyle(fontSize, 0, _T("宋体"));
 	IMAGE background;
-	loadimage(&background, L"./background.JPG", widthWindow, heightWindow);
+	loadimage(&background, L"./images/background.JPG", widthWindow, heightWindow);
 	putimage(0, 0, &background);
 	//画两个选择框
 	int num = button_count;
@@ -240,7 +261,7 @@ int select_initial(int button_count, const wchar_t** text) {
 		button_x[i] = widthWindow * (2 * i + 1) / (2 * num + 1);
 		button_y[i] = heightWindow * 2 / 3;
 		IMAGE button;
-		loadimage(&button, L"./button.jpg", button_width, button_height, true);
+		loadimage(&button, L"./images/button.jpg", button_width, button_height, true);
 		putimage(button_x[i], button_y[i], &button);
 		//fillrectangle(button_x[i], button_y[i], button_x[i] + button_width, button_y[i] + button_height);
 	}
@@ -283,7 +304,7 @@ void init_play(array gridBegin, array gridEnd) {
 	settextstyle(fontSize, 0, _T("宋体"));
 
 	IMAGE background;
-	loadimage(&background, L"./background.JPG", widthWindow, heightWindow);
+	loadimage(&background, L"./images/background.JPG", widthWindow, heightWindow);
 	putimage(0, 0, &background);
 
 	TCHAR s[1024];
@@ -295,6 +316,24 @@ void init_play(array gridBegin, array gridEnd) {
 	outtextxy(xFrameLeft, yFrameLeft - fontSize, s);
 	_stprintf_s(s, _T("%Ts"), FINAL_STATUS);
 	outtextxy(xFrameRight, yFrameRight - fontSize, s);
+
+	settextstyle(fontSize, 0, _T("宋体"));
+	//加载控制按钮图片
+	IMAGE button;
+	loadimage(&button, L"./images/button.jpg", widthButton, heightButton, true);
+	putimage(xButtonContinue, yButton, &button);
+	putimage(xButtonPause, yButton, &button);
+
+	RECT restartProc = { xButtonContinue, yButton,xButtonContinue + widthButton, yButton + heightButton };
+	RECT endProc = { xButtonPause, yButton,xButtonPause + widthButton, yButton + heightButton };
+	settextcolor(WHITE);
+	setbkmode(TRANSPARENT);
+	_stprintf_s(s, _T("%Ts"), RESTAER_PROG);
+	drawtext(s, &restartProc, DT_CENTER | DT_VCENTER | DT_SINGLELINE | DT_EDITCONTROL);
+
+	setbkmode(TRANSPARENT);
+	_stprintf_s(s, _T("%Ts"), END_PROG);
+	drawtext(s, &endProc, DT_CENTER | DT_VCENTER | DT_SINGLELINE | DT_EDITCONTROL);
 
 	paintingDraw(gridBegin);
 	drawFinalStatus(gridEnd);
@@ -352,8 +391,8 @@ bool move(array& current, int col, int line) {
 	return false;
 
 }
-
-void click_to_next(array& current) {
+//返回1表示正常进行了下一步点击，返回0表示返回主界面，返回-1表示直接退出程序
+int click_to_next(array& current) {
 	//判断鼠标点击事件
 	int x, y = 0;
 	MOUSEMSG m;
@@ -363,6 +402,10 @@ void click_to_next(array& current) {
 		m = GetMouseMsg();
 		if (m.uMsg == WM_LBUTTONDOWN)
 		{
+			if (inRect(m.x, m.y, xButtonContinue, yButton, widthButton, heightButton))
+				return 0;
+			if (inRect(m.x, m.y, xButtonPause, yButton, widthButton, heightButton))
+				return -1;
 			x = m.x;
 			y = m.y;
 
@@ -374,9 +417,74 @@ void click_to_next(array& current) {
 
 			bool ok = move(current, col, line);
 			if (ok)
-				return;
+				return 1;
 			else
 				continue;
 		}
 	}
+}
+//判断鼠标位置是否在矩形内
+bool inRect(int x, int y, int left, int top, int width, int height)
+{
+	return (x >= left && x <= left + width && y >= top && y <= top + height);
+}
+//检测结束时的按钮，0为重新开始，1为退出
+bool endButton()
+{
+	settextstyle(fontSize, 0, _T("宋体"));
+	TCHAR s[1024];
+	//加载控制按钮图片
+	IMAGE button;
+	loadimage(&button, L"./images/button.jpg", widthButton, heightButton, true);
+	putimage(xButtonContinue, yButton, &button);
+	putimage(xButtonPause, yButton, &button);
+
+	RECT restartProc = { xButtonContinue, yButton,xButtonContinue + widthButton, yButton + heightButton };
+	RECT endProc = { xButtonPause, yButton,xButtonPause + widthButton, yButton + heightButton };
+	settextcolor(WHITE);
+	setbkmode(TRANSPARENT);
+	_stprintf_s(s, _T("%Ts"), RESTAER_PROG);
+	drawtext(s, &restartProc, DT_CENTER | DT_VCENTER | DT_SINGLELINE | DT_EDITCONTROL);
+
+	setbkmode(TRANSPARENT);
+	_stprintf_s(s, _T("%Ts"), END_PROG);
+	drawtext(s, &endProc, DT_CENTER | DT_VCENTER | DT_SINGLELINE | DT_EDITCONTROL);
+
+	MOUSEMSG m;
+	FlushMouseMsgBuffer();
+	while (1)
+	{
+		//	return 0;
+		m = GetMouseMsg();
+		//	return 0;
+		//	std::cout << 1;
+		if (m.uMsg == WM_LBUTTONDOWN)
+		{
+			if (inRect(m.x, m.y, xButtonContinue, yButton, widthButton, heightButton))
+				return 0;
+			if (inRect(m.x, m.y, xButtonPause, yButton, widthButton, heightButton))
+				return 1;
+		}
+	}
+	return 0;
+}
+//提示移动鼠标
+void draw_promote()
+{
+	TCHAR s[1024];
+	settextcolor(WHITE);
+	setbkcolor(BLACK);
+	settextstyle(fontSize, 0, _T("宋体"));
+	_stprintf_s(s, _T("%Ts"), PROMOTE);
+	outtextxy(10, 10, s);
+}
+//提示手玩模式如何使用
+void draw_play_promote()
+{
+	TCHAR s[1024];
+	settextcolor(WHITE);
+	setbkcolor(BLACK);
+	settextstyle(fontSize, 0, _T("宋体"));
+	_stprintf_s(s, _T("%Ts"), PLAY_PROMOTE);
+	outtextxy(10, 10, s);
 }

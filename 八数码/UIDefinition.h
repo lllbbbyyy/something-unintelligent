@@ -68,6 +68,11 @@ const wchar_t PAUSE[] = L"暂停";
 const wchar_t DISPLAY_END[] = L"操作/演示结束";
 const wchar_t RESTAER_PROG[] = L"返回开始界面";
 const wchar_t END_PROG[] = L"结束";
+const wchar_t PROMOTE[] = L"移动鼠标继续";
+
+const wchar_t GO_ON[] = L"下一步";
+
+const wchar_t PLAY_PROMOTE[] = L"点击空格周围的格子进行移动";
 
 //函数声明
 
@@ -89,6 +94,14 @@ void updateStatus(const int step);
 int select_initial(int button_count, const wchar_t** text);
 //手玩模式的图形界面显示
 void init_play(array gridBegin,array gridEnd);
-void click_to_next(array& current);
+int click_to_next(array& current);
 bool match(array& paint, int x, int y, int& col, int& line);
 bool move(array& current, int col, int line);
+//判断鼠标位置是否在矩形内
+bool inRect(int x, int y, int left, int top, int width, int height);
+//检测结束时的按钮，0为重新开始，1为退出
+bool endButton();
+//提示移动鼠标
+void draw_promote();
+//提示手玩模式如何使用
+void draw_play_promote();
