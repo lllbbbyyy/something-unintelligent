@@ -53,7 +53,7 @@ bool inRect(int x, int y, int left, int top, int width, int height)
 }
 
 //子线程内捕获鼠标事件
-void getMouseStatus(bool &done, bool &isPause)
+void getMouseStatus(bool &done, volatile bool &isPause)
 {
 	MOUSEMSG m;
 	while(!done)
@@ -144,7 +144,7 @@ int main()
 			//开始画图
 			int stepCnt = 0;
 			bool mDone = false;
-			bool isPause = false;
+			volatile bool isPause = false;
 			init(dispMode, function, milSec, int(route.size() - 1), numFoundNode, (int)qu.size());
 			std::thread thr(getMouseStatus, std::ref(mDone), std::ref(isPause));
 			drawFinalStatus(foundState(gridEnd));
@@ -158,6 +158,7 @@ int main()
 			}
 			mDone = true;
 			thr.detach();
+		//	thr.join();
 		}
 		//手玩模式
 		else if(pattern == 0) {
