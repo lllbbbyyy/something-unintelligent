@@ -68,7 +68,7 @@ int main()
 	//注意不是std::array，存储了步长（深度）信息
 	array gridBegin;
 	array gridEnd;
-
+	tree search_tree;
 	int isEnd = 0;
 
 	while (!isEnd)
@@ -125,7 +125,7 @@ int main()
 			while (!isEqual(gridCurr.state, gridEnd))
 			{
 				//寻找下一层节点
-				nextState(gridCurr.state, gridEnd, qu, foundMap, function + 1);
+				nextState(gridCurr.state, gridEnd, qu, foundMap, function + 1,search_tree);
 				gridCurr = qu.top();
 				qu.pop();
 				numFoundNode++;
@@ -138,8 +138,9 @@ int main()
 			std::deque<foundState> route;
 			findRoute(gridBegin, gridEnd, foundMap, route);
 			//输出深度信息，已扩展节点，未扩展节点
-			std::cout << route.size() - 1 << std::endl << numFoundNode << std::endl << qu.size() << std::endl;
-
+	//		std::cout << route.size() - 1 << std::endl << numFoundNode << std::endl << qu.size() << std::endl;
+			//绘制搜索树
+			draw_tree(search_tree,route,function+1);
 			//开始画图
 			int stepCnt = 0;
 			bool mDone = false;

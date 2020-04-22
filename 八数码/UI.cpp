@@ -65,7 +65,7 @@ void init(const int dispMode, const int selFun, const double searchTime, const i
 	IMAGE button;
 	loadimage(&button, L"./images/button.jpg", widthButton, heightButton, true);
 	putimage(xButtonContinue, yButton, &button);
-	if (dispMode == 0) 
+	if (dispMode == 0)
 	{
 		putimage(xButtonPause, yButton, &button);
 	}
@@ -84,7 +84,7 @@ void init(const int dispMode, const int selFun, const double searchTime, const i
 
 	setbkmode(TRANSPARENT);
 
-	if (dispMode == 0) 
+	if (dispMode == 0)
 	{
 		_stprintf_s(s, _T("%Ts"), PAUSE);
 
@@ -487,4 +487,81 @@ void draw_play_promote()
 	settextstyle(fontSize, 0, _T("宋体"));
 	_stprintf_s(s, _T("%Ts"), PLAY_PROMOTE);
 	outtextxy(10, 10, s);
+}
+void draw_treenode(tree& search_tree, std::deque<foundState> route, foundState& sta_node, int gap, double value, int x, int y, int floor,int height_per_floor,int end_floor,int i_node,int search_mode)
+{
+	if (floor == end_floor)
+	{
+		return;
+	}
+	TCHAR buffer[100];
+	if (i_node < (int)route.size())
+	{
+		array arr1{ sta_node.arr,0 }, arr2{ route[i_node].arr,0 };
+		if (isEqual(arr1, arr2))
+		{
+			settextcolor(RED);
+		}
+		else
+		{
+			settextcolor(WHITE);
+		}
+	}
+	else
+	{
+		settextcolor(WHITE);
+	}
+	int i, j;
+	for (i = 1; i < (int)sta_node.arr.size(); i++)
+	{
+		for (j = 1; j < (int)sta_node.arr[0].size(); j++)
+		{
+			_stprintf_s(buffer, _T("%d"), sta_node.arr[i][j]);
+			outtextxy(x + j * 15, y + i * 15, buffer);
+		}
+	}
+	if (value == 0)
+	{
+		array arr1{ route[i_node].arr,i_node }, arr2{ route[int(route.size()-1)].arr,0 };
+		value = calculateValue(arr1, arr2,search_mode);
+	}
+	_stprintf_s(buffer, _T("%.1f"), value);
+	outtextxy(x + j/2+15, y + i * 17, buffer);
+	int be_x = x - gap * 3 / 2;
+	int cnt = 0;
+	for (auto& it : search_tree[sta_node])
+	{
+		array arr{ it.arr,0 };
+		foundState next_node(arr);
+		//递归地画下一层地节点
+		int xx = be_x + cnt * gap;
+		int yy = y + height_per_floor;
+		if (floor != end_floor - 1)
+		{
+			setlinecolor(WHITE);
+			line(x + 40, y + 90, xx + 40, yy);
+		}
+		draw_treenode(search_tree, route, next_node, gap / 4, it.value,xx,yy,floor+1,height_per_floor,end_floor,i_node+1,search_mode);
+		cnt++;
+	}
+
+}
+void draw_tree(tree& search_tree, std::deque<foundState> route,int mode)
+{
+	setbkcolor(BLACK);
+	cleardevice();
+	settextcolor(WHITE);
+	settextstyle(15, 0,_T("宋体"));
+	const int num_floor = 4;
+	int i_node = 0;
+	//开始递归画节点
+	for (int i_node = 0;i_node<int(route.size());i_node+=num_floor-2)
+	{
+		cleardevice();
+		settextcolor(WHITE);
+		outtextxy(0, 0, _T("每次都以上一副图的最后的正确（红色）节点进行该页搜索树的拓展，按回车键继续"));
+		draw_treenode(search_tree, route, route[i_node], widthWindow / 4, 0, widthWindow / 2, heightWindow/10, 1, heightWindow / 4, num_floor, i_node,mode);
+		getchar();
+	}
+
 }

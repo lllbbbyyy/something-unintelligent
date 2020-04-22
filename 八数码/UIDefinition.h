@@ -105,3 +105,5 @@ bool endButton();
 void draw_promote();
 //提示手玩模式如何使用
 void draw_play_promote();
+//绘制搜索树
+void draw_tree(tree& search_tree, std::deque<foundState> route,int mode);

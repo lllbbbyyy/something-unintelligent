@@ -24,6 +24,10 @@ double calculateValue(array& curState, array& endState, int mode)
 	{
 		for (int j = 1; j < int(endState.arr[0].size()); j++)
 		{
+			if (curState.arr[i][j] == 0)
+			{
+				continue;
+			}
 			//不相同个数的评估
 			if (mode == 1) {
 				if (curState.arr[i][j] != endState.arr[i][j])
@@ -32,7 +36,7 @@ double calculateValue(array& curState, array& endState, int mode)
 				}
 			}
 			//曼哈顿距离评估
-			else if (mode == 2 || mode == 3) {
+			if (mode == 2 || mode == 3) {
 				int flag = 0;
 				for (int m = 1; m < int(endState.arr.size()); m++)
 				{
@@ -41,15 +45,17 @@ double calculateValue(array& curState, array& endState, int mode)
 						if (curState.arr[i][j] == endState.arr[m][n])
 						{
 							if (mode == 2) {
+								double tem = 0;
 								if (i < m)
-									value += m - i;
+									tem += m - i;
 								else
-									value += i - m;
+									tem += i - m;
 								if (j < n)
-									value += n - j;
+									tem += n - j;
 								else
-									value += j - n;
+									tem += j - n;
 								flag = 1;
+								value += tem;
 								break;
 							}
 							else if (mode == 3)
@@ -71,7 +77,7 @@ double calculateValue(array& curState, array& endState, int mode)
 	return curState.step + value;
 }
 //增加参数mode，保证调用评估函数的时候不会一直使用默认的参数
-void nextState(array& curState, array& endState, priQueue& qu, map& foundMap,int mode)
+void nextState(array& curState, array& endState, priQueue& qu, map& foundMap,int mode,tree& search_tree)
 {
 	//四个移动方向
 	const int rowMove[] = { -1,0,1,0 };
@@ -108,7 +114,18 @@ void nextState(array& curState, array& endState, priQueue& qu, map& foundMap,int
 			curState.step++;
 			if (foundMap.empty() || !foundMap.count(foundState(curState))) {
 				//如果已经遍历过的表为空或者当前的状态没有被寻找过，入队
-				qu.push({ calculateValue(curState,endState,mode),curState });
+
+				double value_cur = calculateValue(curState, endState, mode);
+				if (search_tree.count(parent))
+				{
+					search_tree[parent].push_back({ curState.arr,value_cur });
+				}
+				else
+				{
+					search_tree[parent] = std::vector<tree_node>{};
+					search_tree[parent].push_back({ curState.arr,value_cur });
+				}
+				qu.push({value_cur ,curState });
 				foundMap[foundState(curState)] = parent;
 			}
 			//回溯

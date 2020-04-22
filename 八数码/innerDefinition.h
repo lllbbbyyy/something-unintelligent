@@ -95,8 +95,15 @@ struct nodeState
 		return value > a.value;
 	}
 };
+struct tree_node
+{
+	std::array<std::array<int, col + 1>, row + 1> arr;
+	double value;
+};
 typedef std::priority_queue<nodeState> priQueue;
 typedef std::map<foundState, foundState> map;
+typedef std::map<foundState,std::vector<tree_node>> tree;
+
 
 //initial flags,数字代表从左至右第几个按钮[0,1]
 const int RANDOM_INITIAL = 0;
@@ -118,7 +125,7 @@ bool isEqual(array& grid1, array& grid2);
 double calculateValue(array& curState, array& endState, int mode);
 //寻找下一个状态
 //增加参数mode，保证调用评估函数的时候不会一直使用默认的参数
-void nextState(array& curState, array& endState, priQueue& qu, map& foundMap,int mode);
+void nextState(array& curState, array& endState, priQueue& qu, map& foundMap,int mode, tree& search_tree);
 //返回存储的路径,防止构造函数花费太多时间因此使用引用传递
 void findRoute(array& beginState, array& endState, map& foundMap, std::deque<foundState>& route);
 //判断对应开局和终局是否有解
@@ -126,3 +133,4 @@ bool has_solution(array gridBegin, array gridEnd);
 //随机初始化开局和终局
 void random_initial(array& gridBegin,array& gridEnd);
 int personal_initial(array& gridBegin,array& gridEnd,const std::string path);
+
